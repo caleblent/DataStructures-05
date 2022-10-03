@@ -12,80 +12,43 @@ public class SortedLinkedList<T extends Comparable<? super T>> {
 	/** The number of items in the list */
 	private int nodeCount;
 
-	/** 
-	 * Don't pay too much attention to this constructor since we're going to
-	 * move on to a better version soon.  Just know that it's putting all of the
-	 * data items from the items array into a LinkedList in the same order
-	 * @param items
-	 */
-	public SortedLinkedList(T[] items) {
-		this.clear();
-		
-		int size;
-		if (items != null)
-			size = items.length;
-		else
-			size = 0;
-		
-		ListNode temp = null;
-		for(int i = size-1; i >= 0; i--) {
-			temp = new ListNode(items[i], temp);
-		}
-		head = new ListNode(null, temp);
-		nodeCount = size;
+	public SortedLinkedList() {
+		tail = new ListNode(null, null);
+		head = new ListNode(null, tail);
+		nodeCount = 0;
 	}
 	
-	public void insert(T value, int index) throws IllegalArgumentException {
-		// handles the scenario where they want to insert at index 0 where there is no data
-		if (index == 0 && nodeCount == 0) {
-			head.next = new ListNode(value, null);
-			nodeCount++;
-			return;
-		}
-		if (index < 0 || index > nodeCount)
-			throw new IllegalArgumentException(index + " is not a valid index.");
-		
-		ListNode newNode = new ListNode(value, null);
-		if (index == 0) {
-			newNode.next = head.next;
+	public void addItem(T data) {
+		if (nodeCount == 0) {
+			ListNode newNode = new ListNode(data, tail);
 			head.next = newNode;
 		} else {
-			ListNode tempNode = head.next;
-			for (int i = 0; i < index - 1; i++) {
-				tempNode = tempNode.next;
+			ListNode temp = head;
+			while (temp.next.data.compareTo(data) < 0) {
+				temp = temp.next;
+				if (temp.next == tail) {
+					break;
+				}
 			}
-			ListNode nodeNextToNewNode = tempNode.next;
-			tempNode.next = newNode;
-			newNode.next = nodeNextToNewNode;
+			ListNode newNode = new ListNode(data, temp.next);
+			temp.next = newNode;
 		}
 		nodeCount++;
 	}
 	
-	public void delete(T value) throws IllegalArgumentException {
-		if (nodeCount == 0)
-			throw new IllegalArgumentException("There are no values to delete.");
-		ListNode curr = head;
-		while (curr.next.data != value) {
-			curr = curr.next;
-			if (curr.next == tail)
-				throw new IllegalArgumentException("Given value cannot be deleted as it doesn't exist.");
+	public void deleteItem(T data) throws IllegalArgumentException {
+		ListNode temp = head;
+		if (temp.next == tail) {
+			throw new IllegalArgumentException("Specified data is not present here.");
 		}
-		curr.next = curr.next.next;
+		while (temp.next.data.compareTo(data) != 0) {
+			temp = temp.next;
+			if (temp.next == tail) {
+				throw new IllegalArgumentException("Specified data is not present here.");
+			}
+		}
+		temp.next = temp.next.next;
 		nodeCount--;
-	}
-	
-	public void deleteIndex(int index) throws IllegalArgumentException {
-		if (nodeCount == 0)
-			throw new IllegalArgumentException("There are no values to delete.");
-		if (index < 0 || index > nodeCount)
-			throw new IllegalArgumentException(index + " is not a valid index.");
-		ListNode curr = head;
-		for (int i = 0; i < index; i++) {
-			curr = curr.next;
-			if (curr.next == tail)
-				throw new IllegalArgumentException("Given value cannot be deleted as it doesn't exist.");
-		}
-		curr.next = curr.next.next;
 	}
 	
 	/**
@@ -136,35 +99,25 @@ public class SortedLinkedList<T extends Comparable<? super T>> {
 		return false;
 	}
 	
+	/**
+	 * This prints out the size of the linked list, and then the indexes and 
+	 * elements of all nodes currently in the list.
+	 */
 	@Override
 	public String toString() {
-		String retVal = "";
+		String str = "";
 		
-		if (head == null)
-			return "";
+		str += "Size: " + nodeCount + "\n";
 		
-		ListNode ptr = head.next;
-		if (ptr == null)
-			return "";
-		
-		while( ptr != null) {
-			retVal += ptr.data + " ";
-//			if (ptr.next != null) {
-//				retVal += "-> ";
-//			}
-			ptr = ptr.next;
+		for (int i = 0; i < nodeCount; i++) {
+			str += i + ":\t" + this.get(i) + "\n";
 		}
 		
-		return retVal;
+		return str;
 	}
 	
 	public int getNodeCount() {
 		return this.nodeCount;
-	}
-	
-	private void clear() {
-		this.head = null;
-		this.tail = null;
 	}
 
 	/**
@@ -193,6 +146,10 @@ public class SortedLinkedList<T extends Comparable<? super T>> {
 			data = input;
 			next = nextNode;
 		}
+
+//		public int compareTo(SortedLinkedList<T>.ListNode other) {
+//			return this.data.compareTo(other.data);
+//		}
 
 	}
 	

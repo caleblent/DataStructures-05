@@ -12,7 +12,7 @@ class TestsOfSortedLinkedList {
 
 	@Test
 	void testString() {
-		SortedLinkedList<String> sll = new SortedLinkedList<String>(null);
+		SortedLinkedList<String> sll = new SortedLinkedList<String>();
 		assertEquals("Size: 0\n", sll.toString());
 		
 		assertThrows(IllegalArgumentException.class,
